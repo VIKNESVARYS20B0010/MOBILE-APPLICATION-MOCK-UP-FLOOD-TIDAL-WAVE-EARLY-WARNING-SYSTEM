@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Weather & Disaster Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f8ff;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: auto;
+            margin-top: 50px;
+        }
+        h2 {
+            color: #007bff;
+        }
+        .status {
+            font-size: 20px;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #e3f2fd;
+        }
+        /* Style for the Back Button */
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: white;
+            color: #0073e6;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Back Button Positioned at Top-Left Corner -->
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+
+    <div class="container">
+        <h2>🌦 Real-Time Weather & Disaster Status</h2>
+
+        <!-- Weather Status -->
+        <div class="status">
+            <strong>Weather:</strong> <span id="weatherStatus">Fetching...</span>
+        </div>
+        <div class="status">
+            <strong>Temperature:</strong> <span id="temperature">-</span>°C
+        </div>
+        <div class="status">
+            <strong>Humidity:</strong> <span id="humidity">-</span>%
+        </div>
+
+        <!-- Auto-Updated Disaster Status -->
+        <div class="status">
+            <strong>Disaster Status:</strong> <span id="disasterStatus">Checking...</span>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "fc464493c6e0c13e41fc5795faa1605d"; // Your API Key
+
+        function getWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    let lat = position.coords.latitude;
+                    let lon = position.coords.longitude;
+
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let weatherCondition = data.weather[0].description;
+                            let temp = data.main.temp;
+                            let humidity = data.main.humidity;
+
+                            document.getElementById("weatherStatus").innerText = weatherCondition;
+                            document.getElementById("temperature").innerText = temp;
+                            document.getElementById("humidity").innerText = humidity;
+
+                            // Auto-update disaster status based on weather conditions
+                            updateDisasterStatus(weatherCondition, temp, humidity);
+                        })
+                        .catch(error => {
+                            console.error("Error fetching weather:", error);
+                            document.getElementById("weatherStatus").innerText = "Failed to load weather.";
+                            document.getElementById("disasterStatus").innerText = "Unable to determine disaster status.";
+                        });
+                }, () => {
+                    document.getElementById("weatherStatus").innerText = "Location access denied.";
+                    document.getElementById("disasterStatus").innerText = "Unable to determine disaster status.";
+                });
+            } else {
+                document.getElementById("weatherStatus").innerText = "Geolocation not supported.";
+            }
+        }
+
+        // Function to auto-update disaster status based on weather conditions
+        function updateDisasterStatus(weather, temp, humidity) {
+            let disaster = "No Disaster";
+
+            if (weather.includes("storm") || weather.includes("rain")) {
+                disaster = "⚠️ Flood Warning!";
+            } else if (weather.includes("snow")) {
+                disaster = "❄️ Snowstorm Alert!";
+            } else if (weather.includes("earthquake")) {
+                disaster = "⚠️ Earthquake Detected!";
+            } else if (temp > 40) {
+                disaster = "🔥 Heatwave Alert!";
+            } else if (humidity > 85) {
+                disaster = "⚠️ High Humidity - Risk of Landslides!";
+            }
+
+            document.getElementById("disasterStatus").innerText = disaster;
+        }
+
+        // Navigate back to dashboard
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        window.onload = function() {
+            getWeather();
+        };
+    </script>
+
+</body>
+</html>

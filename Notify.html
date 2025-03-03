@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Center</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e3f2fd; /* Light blue background */
+        }
+        
+        /* Header Styling */
+        header {
+            background-color: #1565c0; /* Deep Blue */
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background: white;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        /* Container for Notifications */
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Notification Box */
+        .notification {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 18px; /* Increased font size */
+        }
+
+        .unread {
+            background-color: #ffebee;
+            font-weight: bold;
+        }
+
+        .read {
+            background-color: #e0e0e0;
+            color: #555;
+        }
+
+        .notification:hover {
+            background-color: #cfd8dc;
+        }
+
+        /* Social Media Icons */
+        .social-icons {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .social-icons a {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+            font-size: 18px;
+            color: black;
+            text-decoration: none;
+        }
+
+        .social-icons i {
+            font-size: 30px; /* Bigger icons */
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .social-icons p {
+            margin: 0;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* Social Media Colors */
+        .facebook { color: #3b5998; }
+        .twitter { color: #1da1f2; }
+        .instagram { color: #e1306c; }
+        .whatsapp { color: #25d366; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="dashboard.html" class="back-button">⬅ Back</a>
+    🚨 Notification Center
+</header>
+
+<div class="container" id="notification-list">
+    <!-- Notifications will be inserted here by JavaScript -->
+</div>
+
+<div class="social-icons">
+    <a href="https://www.facebook.com" target="_blank" class="facebook">
+        <i class="fab fa-facebook-f"></i>
+        <p>Facebook</p>
+    </a>
+    
+    <a href="https://www.twitter.com" target="_blank" class="twitter">
+        <i class="fab fa-twitter"></i>
+        <p>Twitter</p>
+    </a>
+    
+    <a href="https://www.instagram.com" target="_blank" class="instagram">
+        <i class="fab fa-instagram"></i>
+        <p>Instagram</p>
+    </a>
+    
+    <a href="https://www.whatsapp.com" target="_blank" class="whatsapp">
+        <i class="fab fa-whatsapp"></i>
+        <p>WhatsApp</p>
+    </a>
+</div>
+
+<script>
+    // Example notification data
+    let notifications = [
+        { message: "⚠ Heavy Rain Alert: Rainfall exceeding 50mm/h detected in your area.", read: false },
+        { message: "🌊 Water Level Alert: River levels rising abnormally. Stay alert!", read: false },
+        { message: "🎣 Fishing Reminder: You planned to go fishing on 20th Feb. Check weather updates!", read: false },
+        { message: "🚨 Tsunami Warning Issued for coastal areas!", read: false },
+        { message: "📅 Scheduled Fishing Trip: Reminder for your trip on 25th Feb.", read: false },
+        { message: "🌪 Storm Warning: Possible thunderstorms in the next 24 hours.", read: false },
+        { message: "🚨 Evacuation Notice: Residents near riverbanks must prepare for possible evacuation.", read: true },
+        { message: "🎣 Fishing Reminder: You scheduled a fishing trip for 28th Feb.", read: true },
+        { message: "⚠ Flash Flood Alert: Rapid water level increase detected.", read: true },
+        { message: "📢 Weather Update: Temperature drop expected tonight.", read: true }
+    ];
+
+    // Function to load notifications
+    function loadNotifications() {
+        let container = document.getElementById("notification-list");
+        container.innerHTML = ""; // Clear existing notifications
+
+        notifications.forEach((notification, index) => {
+            let div = document.createElement("div");
+            div.className = "notification " + (notification.read ? "read" : "unread");
+            div.innerHTML = notification.message;
+            div.onclick = () => markAsRead(index);
+            container.appendChild(div);
+        });
+    }
+
+    // Function to mark notification as read
+    function markAsRead(index) {
+        notifications[index].read = true;
+        loadNotifications(); // Reload notifications to update styles
+    }
+
+    // Simulate real-time notifications
+    function addNewNotification() {
+        let newAlerts = [
+            "🚧 Road Closure: Flooding reported on Highway 12.",
+            "⚡ Power Outage Warning: Stay prepared for blackouts.",
+            "📢 Emergency Shelter Opened in Town Hall."
+        ];
+        let randomAlert = newAlerts[Math.floor(Math.random() * newAlerts.length)];
+        
+        notifications.unshift({ message: randomAlert, read: false });
+        loadNotifications();
+    }
+
+    setInterval(addNewNotification, 10000); // New alert every 10 seconds
+
+    window.onload = loadNotifications;
+</script>
+
+</body>
+</html>

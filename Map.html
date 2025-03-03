@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Flood Risk Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map { width: 100%; height: 600px; }
+        .legend {
+            background: white;
+            padding: 10px;
+            line-height: 1.5;
+            color: #333;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        #search-box {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 8px;
+            width: 300px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        #back-button {
+            position: absolute;
+            top: 15px;
+            left: 55px;
+            z-index: 1000;
+            padding: 8px 15px;
+            background-color: white;
+            color: #0073e6;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="back-button" onclick="window.location.href='dashboard.html'">Back</button>
+    <input type="text" id="search-box" placeholder="Enter location">
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([52.3555, -1.1743], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var searchMarker = null;
+        var floodMarkers = []; 
+
+        function getRiskColor(risk) {
+            return risk === 'Severe' ? 'red' :
+                   risk === 'Warning' ? 'orange' :
+                   risk === 'Alert' ? 'yellow' : 'green';
+        }
+
+        function getRiskStatus(risk) {
+            return risk === 'Severe' ? 'High Risk: Immediate Action Required' :
+                   risk === 'Warning' ? 'Moderate Risk: Stay Alert' :
+                   risk === 'Alert' ? 'Low Risk: Be Aware' : 'No Risk';
+        }
+
+        async function fetchFloodData() {
+            try {
+                const response = await fetch('https://environment.data.gov.uk/flood-monitoring/id/floods');
+                const data = await response.json();
+                return data.items || [];
+            } catch (error) {
+                console.error("Error fetching flood data:", error);
+                return [];
+            }
+        }
+
+        async function addFloodDataToMap() {
+            const floodData = await fetchFloodData();
+            floodMarkers = [];
+
+            for (const flood of floodData) {
+                if (!flood.geocode) continue; // Skip if no geocode data
+
+                const { lat, long } = flood.geocode;
+                const riskLevel = flood.severity || 'No Warning';
+                const riskStatus = getRiskStatus(riskLevel);
+
+                const marker = L.circleMarker([lat, long], {
+                    color: getRiskColor(riskLevel),
+                    radius: 10,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                marker.bindPopup(`<b>${flood.description || 'Flood Event'}</b><br>Severity: ${riskLevel}`);
+
+                floodMarkers.push({ marker, lat, long, riskLevel });
+
+                marker.on('click', async function () {
+                    const updatedFloodData = await fetchFloodData();
+                    const latestFlood = updatedFloodData.find(f => f.geocode && f.geocode.lat == lat && f.geocode.long == long);
+
+                    if (latestFlood) {
+                        const updatedRiskLevel = latestFlood.severity || 'No Warning';
+                        const updatedRiskStatus = getRiskStatus(updatedRiskLevel);
+                        marker.bindPopup(`<b>${latestFlood.description || 'Flood Event'}</b><br>Severity: ${updatedRiskLevel}<br><b>Updated Risk Status:</b> ${updatedRiskStatus}`).openPopup();
+                    } else {
+                        alert('No updated flood data available for this location.');
+                    }
+                });
+            }
+        }
+
+        // Call function with await to ensure proper execution
+        (async () => { await addFloodDataToMap(); })();
+
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function () {
+            const div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = '<strong>Risk Levels</strong><br>' +
+                '<i style="background:red;width:18px;height:18px;display:inline-block;margin-right:8px;"></i>Severe Flood Warning<br>' +
+                '<i style="background:orange;width:18px;height:18px;display:inline-block;margin-right:8px;"></i>Flood Warning<br>' +
+                '<i style="background:yellow;width:18px;height:18px;display:inline-block;margin-right:8px;"></i>Flood Alert<br>' +
+                '<i style="background:green;width:18px;height:18px;display:inline-block;margin-right:8px;"></i>No Warning';
+            return div;
+        };
+        legend.addTo(map);
+
+        async function geocodeLocation(location) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`);
+                const data = await response.json();
+                return data.length > 0 ? [data[0].lat, data[0].lon] : null;
+            } catch (error) {
+                console.error('Error geocoding location:', error);
+                return null;
+            }
+        }
+
+        function findNearestFloodRisk(lat, lon) {
+            if (floodMarkers.length === 0) return "No data available";
+
+            let nearestFlood = floodMarkers.reduce((prev, curr) => {
+                let prevDist = Math.hypot(prev.lat - lat, prev.long - lon);
+                let currDist = Math.hypot(curr.lat - lat, curr.long - lon);
+                return currDist < prevDist ? curr : prev;
+            });
+
+            return nearestFlood ? nearestFlood.riskLevel : "No risk detected";
+        }
+
+        document.getElementById('search-box').addEventListener('keypress', async function (e) {
+            if (e.key === 'Enter') {
+                const location = e.target.value;
+                const coords = await geocodeLocation(location);
+                if (coords) {
+                    map.setView(coords, 10);
+                    
+                    if (searchMarker) {
+                        map.removeLayer(searchMarker);
+                    }
+
+                    searchMarker = L.marker(coords).addTo(map)
+                        .bindPopup(`<b>${location}</b>`).openPopup();
+                } else {
+                    alert('Location not found');
+                }
+            }
+        });
+
+        setInterval(async () => {
+            map.eachLayer(layer => {
+                if (layer instanceof L.CircleMarker) {
+                    map.removeLayer(layer);
+                }
+            });
+            await addFloodDataToMap();
+        }, 900000);
+    </script>
+</body>
+</html>

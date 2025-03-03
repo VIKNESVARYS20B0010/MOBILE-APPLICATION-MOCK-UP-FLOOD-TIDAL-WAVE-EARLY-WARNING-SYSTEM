@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Times New Roman', serif; }
+        body { text-align: center; padding: 20px; background: skyblue; }
+        .dashboard { text-align: center; padding: 20px; }
+        .icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; }
+        .icons div { width: 80px; height: 80px; background: white; display: flex; justify-content: center; align-items: center; border-radius: 10px; cursor: pointer; font-size: 30px; }
+        .nav { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: white; padding: 10px 0; border-top: 1px solid #ddd; }
+        .nav div { font-size: 30px; cursor: pointer; }
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: white;
+            color: #0073e6;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="back-button" onclick="goBack()">&#8592; Logout</button>
+    </header>
+
+    <div class="dashboard">
+        <div class="welcome" id="welcomeMessage"></div>
+        <div class="icons">
+            <div onclick="navigateTo('weather.html')">☁</div>
+            <div onclick="navigateTo('Calendar.html')">📅</div>
+            <div onclick="navigateTo('Notify.html')">🔔</div>
+            <div onclick="navigateTo('Map.html')">🗺</div>
+            <div onclick="navigateTo('Official.html')">📞</div>
+            <div onclick="navigateTo('reportingForm.html')">📋</div>
+            <div onclick="navigateTo('evacuation.html')">🚨</div>
+        </div>
+        <div class="nav">
+            <div onclick="navigateTo('dashboard.html')">🏠</div>
+            <div onclick="navigateTo('news.html')">📰</div>
+            <div onclick="navigateTo('profile.html')">👤</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('welcomeMessage').innerText = 'Welcome, ' + (localStorage.getItem('username') || 'User');
+
+        function goBack() {
+            localStorage.removeItem('username');
+            window.location.href = "login.html";
+        }
+
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

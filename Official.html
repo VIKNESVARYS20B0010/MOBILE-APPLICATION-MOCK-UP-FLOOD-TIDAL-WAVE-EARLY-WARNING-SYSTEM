@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Website of Malaysian Meteorological Department</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="backButton">⬅️ Back</button> <!-- Back button -->
+
+    <header>
+        <h1>Official Website of Malaysian Meteorological Department</h1>
+        <!-- Contact icon -->
+        <div id="contactIcon">
+            <a href="Mock.html#contactSection">Contact</a>
+        </div>
+    </header>
+
+    <nav>
+        <button onclick="location.href='staffDirectory.html'">Staff Directory</button>
+        <button onclick="location.href='Address.html'">Offices Address</button>
+    </nav>
+
+    <footer>
+        <p>&copy; 2025 Malaysian Meteorological Department</p>
+    </footer>
+
+    <script>
+        document.getElementById("backButton").onclick = function() {
+            window.location.href = "dashboard.html"; // Navigates back to Mock page
+        };
+    </script>
+</body>
+</html>

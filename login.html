@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Sign Up</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Times New Roman', serif; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: skyblue; }
+        .container { width: 300px; background: white; padding: 20px; text-align: center; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h2 { margin-bottom: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background: skyblue; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #1e90ff; }
+        .link { display: block; margin-top: 10px; color: blue; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN PAGE -->
+    <div class="container" id="loginPage">
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="showDashboard()">Login</button>
+        <div class="link" onclick="showSignUp()">Sign up</div>
+        <div class="link" onclick="showForgotPassword()">Forgot Password?</div>
+    </div>
+
+    <!-- SIGN UP PAGE -->
+    <div class="container" id="signUpPage" style="display: none;">
+        <h2>Sign Up</h2>
+        <input type="text" id="signUpUsername" placeholder="Username">
+        <input type="email" id="signUpEmail" placeholder="Email">
+        <input type="password" id="signUpPassword" placeholder="Password">
+        <button onclick="registerUser()">Sign Up</button>
+        <div class="link" onclick="showLogin()">Already have an account? Login</div>
+    </div>
+
+    <!-- FORGOT PASSWORD PAGE -->
+    <div class="container" id="forgotPasswordPage" style="display: none;">
+        <h2>Reset Password</h2>
+        <input type="email" id="forgotEmail" placeholder="Enter your email">
+        <button onclick="resetPassword()">Reset Password</button>
+        <div class="link" onclick="showLogin()">Back to Login</div>
+    </div>
+
+    <script>
+        function showDashboard() {
+            let username = document.getElementById('loginUsername').value || localStorage.getItem('username');
+            localStorage.setItem('username', username);
+            window.location.href = "dashboard.html";
+        }
+
+        function showSignUp() {
+            hideAll();
+            document.getElementById('signUpPage').style.display = 'block';
+        }
+
+        function showLogin() {
+            hideAll();
+            document.getElementById('loginPage').style.display = 'block';
+        }
+
+        function showForgotPassword() {
+            hideAll();
+            document.getElementById('forgotPasswordPage').style.display = 'block';
+        }
+
+        function registerUser() {
+            let username = document.getElementById('signUpUsername').value;
+            let email = document.getElementById('signUpEmail').value;
+            let password = document.getElementById('signUpPassword').value;
+
+            if (username && email && password) {
+                localStorage.setItem('username', username);
+                localStorage.setItem('email', email);
+                localStorage.setItem('password', password);
+                alert('Sign Up Successful! Please Login.');
+                showLogin();
+            } else {
+                alert('Please fill in all fields!');
+            }
+        }
+
+        function resetPassword() {
+            let email = document.getElementById('forgotEmail').value;
+            if (email) {
+                alert('Password reset link has been sent to ' + email);
+                showLogin();
+            } else {
+                alert('Please enter your email!');
+            }
+        }
+
+        function hideAll() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('signUpPage').style.display = 'none';
+            document.getElementById('forgotPasswordPage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

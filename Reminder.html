@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Reminder</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; background: #f5f5f5; margin: 0; padding: 20px; }
+        .reminder-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 600px; margin: auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; font-size: 16px; }
+        .form-group textarea { resize: vertical; }
+        .button { background-color: #4CAF50; color: white; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="reminder-container">
+        <h2>Set Reminder</h2>
+        <form id="reminderForm">
+            <div class="form-group">
+                <label for="reminderTitle">Title</label>
+                <input type="text" id="reminderTitle" required />
+            </div>
+            <div class="form-group">
+                <label for="reminderDate">Date</label>
+                <input type="text" id="reminderDate" disabled />
+            </div>
+            <div class="form-group">
+                <label for="reminderTime">Select your time</label>
+                <input type="time" id="reminderTime" required />
+            </div>
+            <div class="form-group">
+                <label for="reminderDescription">Add Description</label>
+                <textarea id="reminderDescription" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="button" type="button" onclick="saveReminder()">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const year = urlParams.get('year');
+        const month = urlParams.get('month');
+        const day = urlParams.get('day');
+
+        document.getElementById('reminderDate').value = `${day}-${month}-${year}`;
+
+        function saveReminder() {
+            const reminderTitle = document.getElementById('reminderTitle').value;
+            const reminderTime = document.getElementById('reminderTime').value;
+            const reminderDescription = document.getElementById('reminderDescription').value;
+
+            if (reminderTitle && reminderTime && reminderDescription) {
+                const reminder = {
+                    title: reminderTitle,
+                    time: reminderTime,
+                    description: reminderDescription,
+                    date: `${day}-${month}-${year}`
+                };
+
+                let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+                reminders.push(reminder);
+                localStorage.setItem('reminders', JSON.stringify(reminders));
+
+                alert('Reminder saved successfully!');
+                window.location.href = "dashboard.html";
+            } else {
+                alert("Please fill in all fields before saving.");
+            }
+        }
+    </script>
+</body>
+</html>

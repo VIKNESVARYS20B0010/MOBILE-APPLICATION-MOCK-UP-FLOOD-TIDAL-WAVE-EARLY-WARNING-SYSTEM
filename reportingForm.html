@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Reporting Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: auto;
+            margin-top: 50px;
+        }
+        h2 {
+            color: #007bff;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .submit-btn {
+            background: green;
+            color: white;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background: darkgreen;
+        }
+        /* Back Button (Top-left corner) */
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: white;
+            color: #0073e6;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    
+    </style>
+</head>
+<body>
+
+    <!-- Back Button (Top-left corner) -->
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+
+    <div class="container">
+        <h2>📢 Incident Reporting Form</h2>
+
+        <!-- Form Start -->
+        <form id="reportForm">
+            <!-- Location Input -->
+            <div class="form-group">
+                <label for="location">📍 Location:</label>
+                <input type="text" id="location" name="location" placeholder="Enter location or use GPS">
+                <button type="button" onclick="getLocation()">📡 Use Current Location</button>
+            </div>
+
+            <!-- Incident Description -->
+            <div class="form-group">
+                <label for="description">📝 Incident Description:</label>
+                <textarea id="description" name="description" rows="4" placeholder="Describe the incident"></textarea>
+            </div>
+
+            <!-- Photo Upload -->
+            <div class="form-group">
+                <label for="photo">📸 Upload Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn submit-btn">✅ Submit Report</button>
+        </form>
+    </div>
+
+    <script>
+        // Function to navigate back to dashboard
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Function to get user's location
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    let lat = position.coords.latitude;
+                    let lon = position.coords.longitude;
+                    document.getElementById("location").value = `Latitude: ${lat}, Longitude: ${lon}`;
+                }, () => {
+                    alert("Location access denied.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Form submission handling
+        document.getElementById("reportForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent page reload
+            alert("✅ Report Submitted Successfully!");
+        });
+    </script>
+
+</body>
+</html>

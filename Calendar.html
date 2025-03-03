@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; background: #f0f0f0; }
+        .calendar-container { width: 80%; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; }
+        .calendar-header h2 { margin: 0; font-size: 24px; }
+        .calendar-header select { padding: 5px; }
+        .calendar-header .back-button { font-size: 24px; cursor: pointer; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); margin-top: 20px; }
+        .calendar-days div { text-align: center; padding: 10px; }
+        .calendar-days div:hover { background-color: #e0e0e0; cursor: pointer; }
+        .calendar-days div.active { background-color: skyblue; }
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-weight: bold; }
+        .reminders { margin-top: 20px; }
+        .reminder-item { padding: 5px; cursor: pointer; }
+        .reminder-item:hover { background-color: #e0e0e0; }
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: white;
+            color: #0073e6;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="back-button" onclick="goBack()">&#8592; Back</button>
+    </header> <!-- Back button to Home -->
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">&lt;</button> <!-- Previous month button -->
+            <h2 id="monthYear"></h2> <!-- Month and year display -->
+            <button onclick="changeMonth(1)">&gt;</button> <!-- Next month button -->
+        </div>
+        <div class="calendar-header">
+            <select id="monthSelect" onchange="changeMonthFromSelect()">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+            <select id="yearSelect" onchange="changeYearFromSelect()">
+                <option value="1990">1990</option>
+                <option value="1991">1991</option>
+                <option value="1992">1992</option>
+                <option value="1993">1993</option>
+                <option value="1994">1994</option>
+                <option value="1995">1995</option>
+                <option value="1996">1996</option>
+                <option value="1997">1997</option>
+                <option value="1998">1998</option>
+                <option value="1999">1999</option>
+                <option value="2000">2000</option>
+                <option value="2001">2001</option>
+                <option value="2002">2002</option>
+                <option value="2003">2003</option>
+                <option value="2004">2004</option>
+                <option value="2005">2005</option>
+                <option value="2006">2006</option>
+                <option value="2007">2007</option>
+                <option value="2008">2008</option>
+                <option value="2009">2009</option>
+                <option value="2010">2010</option>
+                <option value="2011">2011</option>
+                <option value="2012">2012</option>
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025" selected>2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+            </select>
+        </div>
+        <div class="weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+        <div class="calendar-days" id="calendarDays">
+            <!-- Days will be dynamically filled by JavaScript -->
+        </div>
+
+        <div class="reminders" id="remindersBelowCalendar">
+            <!-- Reminders will be dynamically filled here -->
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth(); // 0 to 11
+        let currentYear = currentDate.getFullYear();
+        let reminders = {}; // Store reminders by date
+
+        // Load calendar for the current month and year
+        loadCalendar(currentMonth, currentYear);
+
+        // Function to navigate between months
+        function changeMonth(offset) {
+            currentMonth += offset;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            loadCalendar(currentMonth, currentYear);
+        }
+
+        // Function to change month based on dropdown selection
+        function changeMonthFromSelect() {
+            const monthSelect = document.getElementById("monthSelect");
+            currentMonth = parseInt(monthSelect.value);
+            loadCalendar(currentMonth, currentYear);
+        }
+
+        // Function to change year based on dropdown selection
+        function changeYearFromSelect() {
+            const yearSelect = document.getElementById("yearSelect");
+            currentYear = parseInt(yearSelect.value);
+            loadCalendar(currentMonth, currentYear);
+        }
+
+        // Function to load the calendar for a specific month and year
+        function loadCalendar(month, year) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get days in month
+            const firstDayOfMonth = new Date(year, month, 1).getDay(); // Get the first day of the month
+            const monthYearDisplay = document.getElementById("monthYear");
+            const calendarDays = document.getElementById("calendarDays");
+
+            // Update the month and year display
+            monthYearDisplay.innerText = `${getMonthName(month)} ${year}`;
+
+            // Clear the previous days in the calendar
+            calendarDays.innerHTML = '';
+
+            // Add empty spaces for the first day of the month
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyDiv = document.createElement("div");
+                calendarDays.appendChild(emptyDiv);
+            }
+
+            // Add the actual days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement("div");
+                dayDiv.innerText = day;
+                dayDiv.classList.add("day");
+                dayDiv.onclick = function() { goToReminderPage(year, month, day); };
+                calendarDays.appendChild(dayDiv);
+            }
+
+            // Update the select dropdowns for the month and year
+            document.getElementById("monthSelect").value = month;
+            document.getElementById("yearSelect").value = year;
+
+            // Load reminders for the current month
+            loadReminders(year, month);
+        }
+
+        // Function to get the month name
+        function getMonthName(monthIndex) {
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return months[monthIndex];
+        }
+
+        // Navigate to the Reminder page for the selected day
+        function goToReminderPage(year, month, day) {
+            window.location.href = `Reminder.html?year=${year}&month=${month}&day=${day}`;
+        }
+
+        // Load reminders for the current month
+        function loadReminders(year, month) {
+            const remindersBelowCalendar = document.getElementById("remindersBelowCalendar");
+            remindersBelowCalendar.innerHTML = '';
+
+            const dateKey = `${year}-${month + 1}`;
+            if (reminders[dateKey]) {
+                reminders[dateKey].forEach(reminder => {
+                    const reminderDiv = document.createElement("div");
+                    reminderDiv.classList.add("reminder-item");
+                    reminderDiv.innerText = `${reminder.title} (Click to edit/delete)`;
+                    reminderDiv.onclick = function() { editOrDeleteReminder(reminder); };
+                    remindersBelowCalendar.appendChild(reminderDiv);
+                });
+            }
+        }
+
+        // Function to edit or delete a reminder
+        function editOrDeleteReminder(reminder) {
+            // Ask for delete or edit
+            if (confirm(`Edit or Delete reminder: "${reminder.title}"?`)) {
+                const action = prompt("Enter 'edit' to edit or 'delete' to delete");
+                if (action === 'edit') {
+                    // Redirect to reminder page to edit
+                    goToReminderPage(reminder.year, reminder.month, reminder.day);
+                } else if (action === 'delete') {
+                    deleteReminder(reminder);
+                }
+            }
+        }
+
+        // Function to delete a reminder
+        function deleteReminder(reminder) {
+            const dateKey = `${reminder.year}-${reminder.month}`;
+            const reminderIndex = reminders[dateKey].indexOf(reminder);
+            if (reminderIndex > -1) {
+                reminders[dateKey].splice(reminderIndex, 1);
+                loadReminders(reminder.year, reminder.month);
+            }
+        }
+    </script>
+    <script>
+        function goBack() {
+            window.location.href = "dashboard.html";
+        }
+    </script>
+    
+</body>
+</html>

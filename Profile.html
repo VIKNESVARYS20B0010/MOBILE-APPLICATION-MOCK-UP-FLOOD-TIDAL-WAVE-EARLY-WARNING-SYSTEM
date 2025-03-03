@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; display: flex; justify-content: center; align-items: center; flex-direction: column; min-height: 100vh; }
+        .container { width: 90%; max-width: 500px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px; text-align: center; }
+        h2 { color: #333; margin-bottom: 20px; }
+        .profile-info div, .feedback-form div { margin-bottom: 15px; text-align: left; }
+        .profile-info span, .feedback-form label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .input-field, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .edit-btn, .edit-feedback-btn { background: #007bff; color: white; }
+        .save-btn, .save-feedback-btn { background: #28a745; color: white; display: none; }
+        .submit-btn { background: #ff9800; color: white; display: none; }
+        .back-btn { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>User Profile</h2>
+        <div class="profile-info">
+            <div><span>Name:</span> <input type="text" id="profileName" class="input-field" disabled></div>
+            <div><span>Email:</span> <input type="email" id="profileEmail" class="input-field" disabled></div>
+            <div><span>Phone Number:</span> <input type="text" id="profilePhone" class="input-field" disabled></div>
+            <div><span>User Role:</span>
+                <select id="userRole" class="input-field" disabled>
+                    <option value="resident">Resident</option>
+                    <option value="womens_group">Women’s Group</option>
+                    <option value="government">Government</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn edit-btn" onclick="enableEditing()">Edit</button>
+        <button class="btn save-btn" onclick="saveChanges()">Save</button>
+        <button class="btn back-btn" onclick="goBack()">Back</button>
+    </div>
+
+    <div class="container">
+        <h2>Feedback Form</h2>
+        <div class="feedback-form">
+            <div>
+                <label for="feedback">Your Feedback:</label>
+                <textarea id="feedback" class="input-field" rows="4" disabled></textarea>
+            </div>
+        </div>
+        <button class="btn edit-feedback-btn" onclick="enableFeedbackEditing()">Edit Feedback</button>
+        <button class="btn save-feedback-btn" onclick="saveFeedback()">Save Feedback</button>
+        <button class="btn submit-btn" onclick="submitFeedback()">Submit</button>
+    </div>
+
+    <div class="container">
+        <div class="container">
+            <h2>Help Centre</h2>
+            <p>The Help Centre within Flood Alert provides a directory of emergency contacts in Malaysia, including:</p>
+            <ul>
+                <li><strong>Police / Ambulance:</strong> 999 or 112 from a mobile phone</li>
+                <li><strong>Fire and Rescue Department (Bomba):</strong> 994 or 112 from a mobile phone</li>
+                <li><strong>Civil Defence:</strong> 991</li>
+                <li><strong>Malaysian Red Crescent Society:</strong> 03-2143 6122, 03-2143 7122, or 03-2143 8122</li>
+            </ul>
+           
+        <p>If you need assistance, please contact us:</p>
+        <p>Email: s20b0010@siswa.umk.edu.my  or s20a0009@siswa.umk.edu.my</p>
+        <p>Phone: +60 11-2839 9342 or +60 16-330 5280 </p>
+    </div>
+
+    <script>
+        document.getElementById('profileName').value = localStorage.getItem('username') || 'John Doe';
+        document.getElementById('profileEmail').value = localStorage.getItem('userEmail') || 'example@example.com';
+        document.getElementById('profilePhone').value = localStorage.getItem('userPhone') || '+06 123 45678';
+        document.getElementById('userRole').value = localStorage.getItem('userRole') || 'resident';
+        document.getElementById('feedback').value = localStorage.getItem('userFeedback') || '';
+
+        function enableEditing() {
+            document.querySelectorAll('.profile-info .input-field').forEach(field => field.disabled = false);
+            document.querySelector('.edit-btn').style.display = 'none';
+            document.querySelector('.save-btn').style.display = 'block';
+        }
+
+        function saveChanges() {
+            localStorage.setItem('username', document.getElementById('profileName').value);
+            localStorage.setItem('userEmail', document.getElementById('profileEmail').value);
+            localStorage.setItem('userPhone', document.getElementById('profilePhone').value);
+            localStorage.setItem('userRole', document.getElementById('userRole').value);
+            alert('Profile updated successfully!');
+            document.querySelectorAll('.profile-info .input-field').forEach(field => field.disabled = true);
+            document.querySelector('.edit-btn').style.display = 'block';
+            document.querySelector('.save-btn').style.display = 'none';
+        }
+
+        function enableFeedbackEditing() {
+            document.getElementById('feedback').disabled = false;
+            document.querySelector('.edit-feedback-btn').style.display = 'none';
+            document.querySelector('.save-feedback-btn').style.display = 'block';
+            document.querySelector('.submit-btn').style.display = 'block';
+        }
+
+        function saveFeedback() {
+            localStorage.setItem('userFeedback', document.getElementById('feedback').value);
+            alert('Feedback saved successfully!');
+            document.getElementById('feedback').disabled = true;
+            document.querySelector('.edit-feedback-btn').style.display = 'block';
+            document.querySelector('.save-feedback-btn').style.display = 'none';
+        }
+
+        function submitFeedback() {
+            if (confirm('Are you sure you want to submit your feedback?')) {
+                alert('Feedback submitted successfully!');
+                localStorage.removeItem('userFeedback');
+                document.getElementById('feedback').value = '';
+                document.getElementById('feedback').disabled = true;
+                document.querySelector('.edit-feedback-btn').style.display = 'block';
+                document.querySelector('.save-feedback-btn').style.display = 'none';
+                document.querySelector('.submit-btn').style.display = 'none';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Emergency Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: auto;
+            margin-top: 50px;
+        }
+        h2 {
+            color: #007bff;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .step img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+        .back-btn {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background-color: white;
+            color: #0073e6;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        .video-section, .news-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .video-section h3, .news-section h3 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+        .video-section a, .news-section a {
+            display: block;
+            margin: 10px 0;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .video-section a:hover, .news-section a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Button (Top-left corner) -->
+    <button class="back-btn" onclick="goBack()">🔙 Back</button>
+
+    <div class="container">
+        <h2>🌊 Flood Emergency Instructions</h2>
+
+        <!-- Step 1: Stay Informed -->
+        <div class="step">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828673.png" alt="Stay Informed">
+            <p><strong>Step 1:</strong> Stay updated on flood warnings through local news, radio, or weather apps.</p>
+        </div>
+
+        <!-- Step 2: Move to Higher Ground -->
+        <div class="step">
+            <img src="https://cdn-icons-png.flaticon.com/512/484/484167.png" alt="Move to Higher Ground">
+            <p><strong>Step 2:</strong> If water levels are rising, move to higher ground or an elevated area immediately.</p>
+        </div>
+
+        <!-- Step 3: Turn Off Utilities -->
+        <div class="step">
+            <img src="https://cdn-icons-png.flaticon.com/512/633/633595.png" alt="Turn Off Utilities">
+            <p><strong>Step 3:</strong> Turn off electricity, gas, and water supplies to prevent electrocution and gas leaks.</p>
+        </div>
+
+        <!-- Step 4: Avoid Floodwaters -->
+        <div class="step">
+            <img src="https://cdn-icons-png.flaticon.com/512/2556/2556895.png" alt="Avoid Floodwaters">
+            <p><strong>Step 4:</strong> Avoid walking or driving through floodwaters as they may contain debris or strong currents.</p>
+        </div>
+
+        <!-- Step 5: Evacuate if Necessary -->
+        <div class="step">
+            <img src="https://cdn-icons-png.flaticon.com/512/1598/1598524.png" alt="Evacuate">
+            <p><strong>Step 5:</strong> If authorities issue an evacuation order, follow it immediately and take your emergency kit.</p>
+        </div>
+
+        <!-- YouTube Videos Section -->
+        <div class="video-section">
+            <h3>🎥 Flood Emergency Videos</h3>
+            <a href="https://youtu.be/pi_nUPcQz_A?si=fZx5hwU5QpqJ27LE" target="_blank">✔️ Flood Safety Tips</a>
+            <a href="https://youtu.be/43M5mZuzHF8?si=zqTE0MrbCdovR8_t" target="_blank">✔️ How to Prepare for a Flood</a>
+            <a href="https://youtu.be/DhU7soQ-L-4?si=8r-hM4Ym4m3hspzh" target="_blank">✔️ Flood Survival Guide</a>
+        </div>
+
+        <!-- News Section -->
+        <div class="news-section">
+            <h3>📰 Latest Flood News</h3>
+            <div id="newsContainer">Fetching latest flood news...</div>
+        </div>
+
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Fetch latest flood-related news using Google News RSS
+        async function fetchFloodNews() {
+            try {
+                const response = await fetch("https://newsapi.org/v2/top-headlines?country=my&category=general&apiKey=163e8d6924d746f08fbbb4743f0b1055");
+                const data = await response.json();
+                
+                let newsHTML = "";
+                data.articles.slice(0, 5).forEach(article => {
+                    newsHTML += `<a href="${article.url}" target="_blank">✔️ ${article.title}</a>`;
+                });
+
+                document.getElementById("newsContainer").innerHTML = newsHTML;
+            } catch (error) {
+                document.getElementById("newsContainer").innerHTML = "⚠️ Unable to fetch news at the moment.";
+            }
+        }
+
+        // Fetch news on page load
+        fetchFloodNews();
+    </script>
+
+</body>
+</html>

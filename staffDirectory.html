@@ -1,0 +1,56 @@
+<!-- staffDirectory.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Directory</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function searchStaff() {
+            // Get the input value and make it case-insensitive
+            const query = document.getElementById("staffSearch").value.toLowerCase();
+            const staffList = document.getElementsByClassName("staff");
+
+            // Loop through each staff entry and show/hide based on search query
+            Array.from(staffList).forEach(staff => {
+                const name = staff.querySelector(".name").textContent.toLowerCase();
+                if (name.includes(query)) {
+                    staff.style.display = "block";
+                } else {
+                    staff.style.display = "none";
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Staff Directory</h1>
+        <button onclick="location.href='Official.html'">Back</button>
+    </header>
+
+    <section>
+        <input type="text" id="staffSearch" placeholder="Search by name..." onkeyup="searchStaff()">
+        <p>Please dial 03 - 7967 followed by the extension number.</p>
+
+        <div id="staffDetails">
+            <!-- Staff Dropdown 1 -->
+            <details>
+                <summary>Director General Office</summary>
+                <table>
+                    <tr><th>Name</th><th>Email Address</th><th>Extension No.</th></tr>
+                    <tr><td>Dr. Mohd Hisham Mohd Anip</td><td>hisham@met.gov.my</td><td>8001</td></tr>
+                    <tr><td>Nor Hazanah Hanafi</td><td>hazanah@met.gov.my</td><td>8046</td></tr>
+                    <tr><td>Nordin Omblong</td><td>nordino@met.gov.my</td><td>8049</td></tr>
+                </table>
+            </details>
+            <!-- Other staff details follow the same structure -->
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Malaysian Meteorological Department</p>
+    </footer>
+</body>
+</html>
